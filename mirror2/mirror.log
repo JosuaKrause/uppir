@@ -5,3 +5,15 @@
 ['  File "uppir_mirror.py", line 410, in <module>\n    main()\n', '  File "uppir_mirror.py", line 387, in main\n    service_uppir_clients(myxordatastore, _commandlineoptions.ip, _commandlineoptions.port)\n', '  File "uppir_mirror.py", line 181, in service_uppir_clients\n    xorserver = ThreadedXORServer((ip, port), ThreadedXORRequestHandler)\n', '  File "/System/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/SocketServer.py", line 400, in __init__\n    self.server_bind()\n', '  File "/System/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/SocketServer.py", line 411, in server_bind\n    self.socket.bind(self.server_address)\n', '  File "<string>", line 1, in bind\n']
 1384193194.62 ready to start servers!
 1384193194.65 servers started!
+1384266548.05 [Errno 61] Connection refused
+['  File "uppir_mirror.py", line 410, in <module>\n    main()\n', '  File "uppir_mirror.py", line 349, in main\n    rawmanifestdata = uppirlib.retrieve_rawmanifest(_commandlineoptions.retrievemanifestfrom)\n', '  File "/Users/krause/workspace/uppir/mirror2/uppirlib.py", line 209, in retrieve_rawmanifest\n    return _remote_query_helper(vendorlocation, "GET MANIFEST", defaultvendorport)\n', '  File "/Users/krause/workspace/uppir/mirror2/uppirlib.py", line 329, in _remote_query_helper\n    serversocket.connect((serverhostname, serverport))\n', '  File "<string>", line 1, in connect\n']
+1384266561.29 ready to start servers!
+1384266561.29 servers started!
+1384266606.09 UPPIR 127.0.0.1 63037 GOOD
+1384266680.49 ready to start servers!
+1384266680.49 servers started!
+1384266692.01 UPPIR 127.0.0.1 63052 GOOD
+1384266773.06 ready to start servers!
+1384266773.06 servers started!
+1384266787.26 UPPIR 127.0.0.1 63062 GOOD
+1384266954.16 UPPIR 127.0.0.1 63077 GOOD

@@ -3,3 +3,13 @@
 1384181875.83 ready to start servers!
 1384181875.84 [Errno 49] Can't assign requested address
 ['  File "uppir_mirror.py", line 410, in <module>\n    main()\n', '  File "uppir_mirror.py", line 387, in main\n    service_uppir_clients(myxordatastore, _commandlineoptions.ip, _commandlineoptions.port)\n', '  File "uppir_mirror.py", line 181, in service_uppir_clients\n    xorserver = ThreadedXORServer((ip, port), ThreadedXORRequestHandler)\n', '  File "/System/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/SocketServer.py", line 400, in __init__\n    self.server_bind()\n', '  File "/System/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/SocketServer.py", line 411, in server_bind\n    self.socket.bind(self.server_address)\n', '  File "<string>", line 1, in bind\n']
+1384266577.69 ready to start servers!
+1384266577.69 servers started!
+1384266606.09 UPPIR 127.0.0.1 63038 GOOD
+1384266685.67 ready to start servers!
+1384266685.68 servers started!
+1384266692.02 UPPIR 127.0.0.1 63051 GOOD
+1384266780.05 ready to start servers!
+1384266780.05 servers started!
+1384266787.26 UPPIR 127.0.0.1 63064 GOOD
+1384266954.16 UPPIR 127.0.0.1 63075 GOOD

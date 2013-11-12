@@ -6639,3 +6639,79 @@
 1384181875.83 UPPIRVendor 127.0.0.1 58597 manifest request
 1384193194.5 UPPIRVendor 127.0.0.1 59463 manifest request
 1384193195.04 UPPIRVendor 127.0.0.1 59464 mirrorinfo update 34
+1384266502.81 UPPIRVendor 127.0.0.1 63026 manifest request
+1384266503.05 UPPIRVendor 127.0.0.1 63027 mirrorinfo update 34
+1384266558.27 ready to start servers!
+1384266558.28 servers started!
+1384266561.29 UPPIRVendor 127.0.0.1 63029 manifest request
+1384266561.31 UPPIRVendor 127.0.0.1 63030 mirrorinfo update 34
+1384266572.45 UPPIRVendor 127.0.0.1 63031 manifest request
+1384266572.47 UPPIRVendor 127.0.0.1 63032 mirrorinfo update 34
+1384266577.69 UPPIRVendor 127.0.0.1 63033 manifest request
+1384266577.71 UPPIRVendor 127.0.0.1 63034 mirrorinfo update 34
+1384266606.07 UPPIRVendor 127.0.0.1 63035 manifest request
+1384266606.09 UPPIRVendor 127.0.0.1 63036 mirrorlist request
+1384266621.32 UPPIRVendor 127.0.0.1 63040 mirrorinfo update 34
+1384266632.48 UPPIRVendor 127.0.0.1 63041 mirrorinfo update 34
+1384266637.72 UPPIRVendor 127.0.0.1 63042 mirrorinfo update 34
+1384266667.66 ready to start servers!
+1384266667.68 servers started!
+1384266674.21 UPPIRVendor 127.0.0.1 63043 manifest request
+1384266674.23 UPPIRVendor 127.0.0.1 63044 mirrorinfo update 34
+1384266680.49 UPPIRVendor 127.0.0.1 63045 manifest request
+1384266680.51 UPPIRVendor 127.0.0.1 63046 mirrorinfo update 34
+1384266685.67 UPPIRVendor 127.0.0.1 63047 manifest request
+1384266685.69 UPPIRVendor 127.0.0.1 63048 mirrorinfo update 34
+1384266692.0 UPPIRVendor 127.0.0.1 63049 manifest request
+1384266692.01 UPPIRVendor 127.0.0.1 63050 mirrorlist request
+1384266757.56 ready to start servers!
+1384266757.58 servers started!
+1384266764.49 UPPIRVendor 127.0.0.1 63054 manifest request
+1384266764.51 UPPIRVendor 127.0.0.1 63055 mirrorinfo update 34
+1384266773.06 UPPIRVendor 127.0.0.1 63056 manifest request
+1384266773.08 UPPIRVendor 127.0.0.1 63057 mirrorinfo update 34
+1384266780.05 UPPIRVendor 127.0.0.1 63058 manifest request
+1384266780.07 UPPIRVendor 127.0.0.1 63059 mirrorinfo update 34
+1384266787.24 UPPIRVendor 127.0.0.1 63060 manifest request
+1384266787.26 UPPIRVendor 127.0.0.1 63061 mirrorlist request
+1384266824.53 UPPIRVendor 127.0.0.1 63065 mirrorinfo update 34
+1384266833.09 UPPIRVendor 127.0.0.1 63066 mirrorinfo update 34
+1384266840.08 UPPIRVendor 127.0.0.1 63067 mirrorinfo update 34
+1384266884.54 UPPIRVendor 127.0.0.1 63068 mirrorinfo update 34
+1384266893.1 UPPIRVendor 127.0.0.1 63069 mirrorinfo update 34
+1384266900.1 UPPIRVendor 127.0.0.1 63070 mirrorinfo update 34
+1384266944.55 UPPIRVendor 127.0.0.1 63071 mirrorinfo update 34
+1384266953.11 UPPIRVendor 127.0.0.1 63072 mirrorinfo update 34
+1384266954.14 UPPIRVendor 127.0.0.1 63073 manifest request
+1384266954.16 UPPIRVendor 127.0.0.1 63074 mirrorlist request
+1384266960.11 UPPIRVendor 127.0.0.1 63078 mirrorinfo update 34
+1384267004.56 UPPIRVendor 127.0.0.1 63079 mirrorinfo update 34
+1384267013.13 UPPIRVendor 127.0.0.1 63080 mirrorinfo update 34
+1384267020.12 UPPIRVendor 127.0.0.1 63081 mirrorinfo update 34
+1384267064.58 UPPIRVendor 127.0.0.1 63084 mirrorinfo update 34
+1384267073.14 UPPIRVendor 127.0.0.1 63085 mirrorinfo update 34
+1384267080.13 UPPIRVendor 127.0.0.1 63086 mirrorinfo update 34
+1384267124.59 UPPIRVendor 127.0.0.1 63087 mirrorinfo update 34
+1384267133.15 UPPIRVendor 127.0.0.1 63088 mirrorinfo update 34
+1384267140.15 UPPIRVendor 127.0.0.1 63089 mirrorinfo update 34
+1384267184.6 UPPIRVendor 127.0.0.1 63090 mirrorinfo update 34
+1384267193.16 UPPIRVendor 127.0.0.1 63091 mirrorinfo update 34
+1384267200.16 UPPIRVendor 127.0.0.1 63092 mirrorinfo update 34
+1384267244.62 UPPIRVendor 127.0.0.1 63093 mirrorinfo update 34
+1384267253.18 UPPIRVendor 127.0.0.1 63094 mirrorinfo update 34
+1384267260.17 UPPIRVendor 127.0.0.1 63095 mirrorinfo update 34
+1384267304.63 UPPIRVendor 127.0.0.1 63096 mirrorinfo update 34
+1384267313.19 UPPIRVendor 127.0.0.1 63097 mirrorinfo update 34
+1384267320.18 UPPIRVendor 127.0.0.1 63110 mirrorinfo update 34
+1384267364.64 UPPIRVendor 127.0.0.1 63120 mirrorinfo update 34
+1384267373.21 UPPIRVendor 127.0.0.1 63121 mirrorinfo update 34
+1384267380.2 UPPIRVendor 127.0.0.1 63122 mirrorinfo update 34
+1384267424.65 UPPIRVendor 127.0.0.1 63124 mirrorinfo update 34
+1384267433.22 UPPIRVendor 127.0.0.1 63125 mirrorinfo update 34
+1384267440.21 UPPIRVendor 127.0.0.1 63128 mirrorinfo update 34
+1384267484.67 UPPIRVendor 127.0.0.1 63129 mirrorinfo update 34
+1384267493.23 UPPIRVendor 127.0.0.1 63130 mirrorinfo update 34
+1384267500.22 UPPIRVendor 127.0.0.1 63131 mirrorinfo update 34
+1384267544.68 UPPIRVendor 127.0.0.1 63132 mirrorinfo update 34
+1384267553.24 UPPIRVendor 127.0.0.1 63135 mirrorinfo update 34
+1384267560.23 UPPIRVendor 127.0.0.1 63136 mirrorinfo update 34
