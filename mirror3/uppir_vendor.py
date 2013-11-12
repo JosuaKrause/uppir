@@ -152,7 +152,7 @@ def _add_mirrorinfo_to_list(thismirrorinfo):
   # Private function to add mirror information
 
   # add mirror information along with the time
-  mirrorip = thismirrorinfo['ip']
+  mirrorip = thismirrorinfo['ip']+':'+str(thismirrorinfo['port'])
 
   # get the lock and add it to the dict
   _global_mirrorinfolock.acquire()
