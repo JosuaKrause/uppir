@@ -1,0 +1,16 @@
+Requires: Python 2.5.X + simplejson or Python >= 2.6 and Python < 3.0.   
+
+This code is pre-alpha!   Use at your own discretion / risk.   
+
+One starts by creating a manifest of the files to release.   Then run a vendor
+and set up a mirror.   Outside parties should run their own mirrors.   Then
+clients can obtain content privately from the mirrors.
+
+I'll put more detailed directions for how to use this under the main upPIR 
+site.   This will initially be hosted at: 
+https://www.updateframework.com/wiki/uppir
+
+Please email me with any questions or comments.
+
+Thanks,
+Justin Cappos (justinc@cs.washington.edu)
