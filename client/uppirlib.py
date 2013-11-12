@@ -819,7 +819,7 @@ def create_manifest(rootdir=".", hashalgorithm="sha1-base64", block_size=1024*10
 
 
   # TODO: Improve this.  It really shouldn't use a datastore...
-  import fastsimplexordatastore
+  import simplexordatastore as fastsimplexordatastore
 
   xordatastore = fastsimplexordatastore.XORDatastore(manifestdict['blocksize'], manifestdict['blockcount'])
 
