@@ -133,6 +133,9 @@ def _testmirror(testinfodict):
     mirrorport = testinfodict['port']
     # TODO remove mirror from list
     session.sendmessage(self.request, 'Invalid mirror: '+mirrorip+":"+mirrorport)
+  
+  else:
+    session.sendmessage(self.request, 'Correct mirror: '+mirrorip+":"+mirrorport)
   return
 
 def _check_for_expired_mirrorinfo():
