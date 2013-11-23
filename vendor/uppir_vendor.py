@@ -115,7 +115,7 @@ import time
 def _testmirror(testinfodict):
   # TODO
   bitstring = testinfodict['chunklist']
-  expectedData = testinfodict['data']
+  expectedData = testinfodict['data'].decode("base64", "strict")
   expectedbitstringlength = uppirlib.compute_bitstring_length(_global_myxordatastore.numberofblocks)
 
   if len(bitstring) != expectedbitstringlength:
