@@ -209,6 +209,34 @@ def retrieve_rawmanifest(vendorlocation, defaultvendorport=62293):
   return _remote_query_helper(vendorlocation, "GET MANIFEST", defaultvendorport)
 
 
+def request_mirror_test(testinfo, vendorlocation, defaultvendorport=62293):
+  """
+  <Purpose>
+    TODO
+
+  <Arguments>
+    testinfo: TODO
+    vendorlocation: A string that contains the vendor location.   This can be 
+                    of the form "IP:port", "hostname:port", "IP", or "hostname"
+
+    defaultvendorport: the port to use if the vendorlocation does not include 
+                       one.
+                       
+  <Exceptions>
+    TypeError if the vendorlocation is the wrong type or malformed.
+
+    various socket errors if the connection fails.
+
+  <Side Effects>
+    Contacts the vendor
+
+  <Returns>
+    A string containing the manifest data (unprocessed).   It is a good idea
+    to use parse_manifest to ensure this data is correct.
+  """
+  msg = "RUN TEST"+JSON.stringify(testinfo)
+  _remote_query_helper(vendorlocation, msg, defaultvendorport)
+
 
 
 def retrieve_xorblock_from_mirror(mirrorip, mirrorport,bitstring):

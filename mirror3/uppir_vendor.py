@@ -112,7 +112,28 @@ _global_mirrorinfolock = threading.Lock()
 ########################### Mirrorlist manipulation ##########################
 import time
 
+def _testmirror(testinfodict):
+  # TODO
+  bitstring = testinfodict['chunklist']
+  expectedData = testinfodict['data']
+  expectedbitstringlength = uppirlib.compute_bitstring_length(_global_myxordatastore.numberofblocks)
 
+  if len(bitstring) != expectedbitstringlength:
+    # Invalid request length...
+    _log("UPPIR "+remoteip+" "+str(remoteport)+" Invalid request with length: "+str(len(bitstring)))
+
+    session.sendmessage(self.request, 'Invalid request length')
+    # TODO
+    return
+
+  # Now let's process this...
+  xoranswer = _global_myxordatastore.produce_xor_from_bitstring(bitstring)
+  if xoranswer != expectedData:
+    mirrorip = testinfodict['ip']
+    mirrorport = testinfodict['port']
+    # TODO remove mirror from list
+    session.sendmessage(self.request, 'Invalid mirror: '+mirrorip+":"+mirrorport)
+  return
 
 def _check_for_expired_mirrorinfo():
   # Private function to check to see if mirrors are expired...
@@ -207,6 +228,20 @@ class ThreadedVendorRequestHandler(SocketServer.BaseRequestHandler):
 
       # done!
       return
+  
+    elif requeststring.startswith('RUN TEST'):
+      testrawdata = requeststring[len('RUN TEST'):]
+      try:
+        testinfodict = json.loads(testrawdata)
+      except (TypeError, ValueError), e:
+        session.sendmessage(self.request, "Error cannot deserialize testinfo!")
+        _log("UPPIRVendor "+remoteip+" "+str(remoteport)+" cannot deserialize testinfo!"+str(e))
+        return
+      if type(testinfodict) != dict or 'ip' not in testinfodict or 'port' not in testinfodict or 'data' not in testinfodict or 'chunklist' not in testinfodict:
+        session.sendmessage(self.request, "Error, testinfodict has an invalid format.")
+        _log("UPPIRVendor "+remoteip+" "+str(remoteport)+" testinfodict has an invalid format")
+        return
+      _testmirror(testinfodict)
 
     elif requeststring.startswith('MIRRORADVERTISE'):
       # This is a mirror telling us it's ready to serve clients.

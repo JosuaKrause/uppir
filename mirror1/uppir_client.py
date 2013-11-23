@@ -83,7 +83,7 @@ import simplexorrequestor
 # for basename
 import os.path
 
-
+RANDOM_THRESHOLD = 0 #0.8
 
 def _request_helper(rxgobj):
   # Private helper to get requests.   Multiple threads will execute this...
@@ -113,6 +113,14 @@ def _request_helper(rxgobj):
       rxgobj.notify_success(thisrequest, xorblock)
       sys.stdout.write('.')
       sys.stdout.flush()
+    
+      if random() > RANDOM_THRESHOLD:
+        testmirrorinfo = {}
+        testmirrorinfo['ip'] = mirrorip
+        testmirrorinfo['port'] = mirrorport
+        testmirrorinfo['data'] = xorblock
+        testmirrorinfo['chunklist'] = bitstring
+        request_mirror_test(testmirrorinfo, _commandlineoptions.retrievemanifestfrom)
     
     # regardless of failure or success, get another request...
     thisrequest = rxgobj.get_next_xorrequest()
