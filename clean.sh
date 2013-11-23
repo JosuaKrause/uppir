@@ -1,6 +1,13 @@
 rm mirror1/filestoshare/*
 rm mirror2/filestoshare/*
 rm mirror3/filestoshare/*
+cd mirror1
+mkdir filestoshare
+cd ../mirror2
+mkdir filestoshare
+cd ../mirror3
+mkdir filestoshare
+cd ..
 rm mirror1/manifest.dat
 rm mirror2/manifest.dat
 rm mirror3/manifest.dat
