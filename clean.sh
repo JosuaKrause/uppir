@@ -11,3 +11,4 @@ cd ..
 rm mirror1/manifest.dat
 rm mirror2/manifest.dat
 rm mirror3/manifest.dat
+rm vendor/manifest.dat
