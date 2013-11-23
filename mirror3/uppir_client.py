@@ -66,7 +66,7 @@
 import sys
 
 import optparse
-
+import random
 
 # helper functions that are shared
 import uppirlib
@@ -114,13 +114,13 @@ def _request_helper(rxgobj):
       sys.stdout.write('.')
       sys.stdout.flush()
     
-      if random() > RANDOM_THRESHOLD:
+      if random.random() > RANDOM_THRESHOLD:
         testmirrorinfo = {}
         testmirrorinfo['ip'] = mirrorip
         testmirrorinfo['port'] = mirrorport
         testmirrorinfo['data'] = xorblock
         testmirrorinfo['chunklist'] = bitstring
-        request_mirror_test(testmirrorinfo, _commandlineoptions.retrievemanifestfrom)
+        uppirlib.request_mirror_test(testmirrorinfo, _commandlineoptions.retrievemanifestfrom)
     
     # regardless of failure or success, get another request...
     thisrequest = rxgobj.get_next_xorrequest()
@@ -359,7 +359,7 @@ def main():
 
 
 
-if __name__ == '__main__':
+if __name__== '__main__':
   parse_options()
   main()
 

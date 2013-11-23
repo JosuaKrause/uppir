@@ -234,7 +234,7 @@ def request_mirror_test(testinfo, vendorlocation, defaultvendorport=62293):
     A string containing the manifest data (unprocessed).   It is a good idea
     to use parse_manifest to ensure this data is correct.
   """
-  msg = "RUN TEST"+JSON.stringify(testinfo)
+  msg = "RUN TEST"+json.dumps(testinfo)
   _remote_query_helper(vendorlocation, msg, defaultvendorport)
 
 

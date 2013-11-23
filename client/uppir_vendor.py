@@ -115,7 +115,7 @@ import time
 def _testmirror(testinfodict):
   # TODO
   bitstring = testinfodict['chunklist']
-  expectedData = testinfodict['data']
+  expectedData = testinfodict['data'].decode("base64", "strict")
   expectedbitstringlength = uppirlib.compute_bitstring_length(_global_myxordatastore.numberofblocks)
 
   if len(bitstring) != expectedbitstringlength:
@@ -133,6 +133,9 @@ def _testmirror(testinfodict):
     mirrorport = testinfodict['port']
     # TODO remove mirror from list
     session.sendmessage(self.request, 'Invalid mirror: '+mirrorip+":"+mirrorport)
+  
+  else:
+    session.sendmessage(self.request, 'Correct mirror: '+mirrorip+":"+mirrorport)
   return
 
 def _check_for_expired_mirrorinfo():
