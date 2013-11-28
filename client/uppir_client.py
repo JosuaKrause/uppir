@@ -85,6 +85,7 @@ import base64
 # for basename
 import os.path
 
+# for testing set this to 0
 RANDOM_THRESHOLD = 0 #0.8
 
 def _request_helper(rxgobj):
@@ -123,7 +124,7 @@ def _request_helper(rxgobj):
         testmirrorinfo['data'] = base64.b64encode(xorblock)
         testmirrorinfo['chunklist'] = base64.b64encode(bitstring)
         msg = uppirlib.request_mirror_test(testmirrorinfo, _commandlineoptions.retrievemanifestfrom)
-        print msg+"\n"
+        print msg
 
     # regardless of failure or success, get another request...
     thisrequest = rxgobj.get_next_xorrequest()

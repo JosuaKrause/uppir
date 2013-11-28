@@ -1,7 +1,7 @@
 cd vendor
 rm manifest.dat vendor.log
 python uppir_create_manifest.py ../filestoshare/ 1024 127.0.0.1
-python uppir_vendor.py --foreground &
+python uppir_vendor.py --foreground ../filestoshare/ &
 sleep 1
 cd ../mirror1
 rm manifest.dat mirror.log

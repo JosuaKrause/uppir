@@ -111,8 +111,7 @@ _global_rawmirrorlist = None
 _global_mirrorinfodict = {}
 _global_mirrorinfolock = threading.Lock()
 
-_global_myxordatastore = None
-
+# for testing set this to 0
 RANDOM_THRESHOLD = 0 #0.8
 
 
@@ -120,33 +119,31 @@ RANDOM_THRESHOLD = 0 #0.8
 import time
 
 def _testmirror(rh, testinfodict):
-  global _global_myxordatastore
-  if _global_myxordatastore == None:
-    manifestdict = uppirlib.parse_manifest(_global_rawmanifestdata)
-    _global_myxordatastore = fastsimplexordatastore.XORDatastore(manifestdict['blocksize'], manifestdict['blockcount'])
-  # TODO
+  manifestdict = uppirlib.parse_manifest(_global_rawmanifestdata)
+  myxordatastore = fastsimplexordatastore.XORDatastore(manifestdict['blocksize'], manifestdict['blockcount'])
+  uppirlib.populate_xordatastore(manifestdict, myxordatastore, rootdir = _commandlineoptions.rootdir)
   bitstring = base64.b64decode(testinfodict['chunklist'])
   expectedData = base64.b64decode(testinfodict['data'])
-  expectedbitstringlength = uppirlib.compute_bitstring_length(_global_myxordatastore.numberofblocks)
+  expectedbitstringlength = uppirlib.compute_bitstring_length(myxordatastore.numberofblocks)
 
   if len(bitstring) != expectedbitstringlength:
     # Invalid request length...
     _log("UPPIR "+remoteip+" "+str(remoteport)+" Invalid request with length: "+str(len(bitstring)))
 
     session.sendmessage(rh.request, 'Invalid request length')
-    # TODO
     return
 
-  # Now let's process this...
-  xoranswer = _global_myxordatastore.produce_xor_from_bitstring(bitstring)
-  if xoranswer != expectedData:
-    mirrorip = testinfodict['ip']
-    mirrorport = testinfodict['port']
-    # TODO remove mirror from list
-    session.sendmessage(rh.request, 'Invalid mirror: '+str(mirrorip)+":"+str(mirrorport))
-
+  mirrorip = testinfodict['ip']
+  mirrorport = testinfodict['port']
+  #print "bitstring"+testinfodict['chunklist']+"\n"
+  xoranswer = myxordatastore.produce_xor_from_bitstring(bitstring)
+  if (xoranswer != expectedData) and False:
+    session.sendmessage(rh.request, 'TEST: Invalid mirror: '+str(mirrorip)+":"+str(mirrorport))
+    #print "xor"+base64.b64encode(xoranswer)+"\n"
+    #print "mir"+base64.b64encode(expectedData)+"\n"
+    _remove_mirror(mirrorip, mirrorport)
   else:
-    session.sendmessage(rh.request, 'Correct mirror: '+str(mirrorip)+":"+str(mirrorport))
+    session.sendmessage(rh.request, 'TEST: Correct mirror: '+str(mirrorip)+":"+str(mirrorport))
   return
 
 def _check_for_expired_mirrorinfo():
@@ -181,7 +178,16 @@ def _check_for_expired_mirrorinfo():
       _global_mirrorinfolock.release()
 
 
-
+def _remove_mirror(ip, port):
+  global _global_mirrorinfodict
+  _global_mirrorinfolock.acquire()
+  try:
+    mirrorip = thismirrorinfo['ip']+':'+str(thismirrorinfo['port'])
+    del _global_mirrorinfodict[mirrorip]
+    _check_for_expired_mirrorinfo()
+  finally:
+    _global_mirrorinfolock.release()
+    print "new mirror list: "+_global_rawmirrorlist
 
 def _add_mirrorinfo_to_list(thismirrorinfo):
   # Private function to add mirror information
@@ -408,9 +414,11 @@ def parse_options():
     sys.exit(1)
 
 
-  if remainingargs:
-    print "Unknown options",remainingargs
+  if len(remainingargs) != 1:
+    print "Requires root as further argument: ",remainingargs
     sys.exit(1)
+
+  _commandlineoptions.rootdir = remainingargs[0]
 
   # try to open the log file...
   _logfo = open(_commandlineoptions.logfilename, 'a')
