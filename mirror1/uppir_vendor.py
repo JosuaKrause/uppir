@@ -112,7 +112,7 @@ _global_mirrorinfodict = {}
 _global_mirrorinfolock = threading.Lock()
 
 # for testing set this to 0
-RANDOM_THRESHOLD = 0 #0.8
+RANDOM_THRESHOLD = 0.8
 
 
 ########################### Mirrorlist manipulation ##########################

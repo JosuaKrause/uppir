@@ -86,7 +86,7 @@ import base64
 import os.path
 
 # for testing set this to 0
-RANDOM_THRESHOLD = 0 #0.8
+RANDOM_THRESHOLD = 0.8
 
 def _request_helper(rxgobj):
   # Private helper to get requests.   Multiple threads will execute this...
