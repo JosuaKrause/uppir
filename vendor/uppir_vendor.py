@@ -1,4 +1,4 @@
-""" 
+"""
 <Author>
   Justin Cappos
   (inspired from a previous version by Geremy Condra)
@@ -8,16 +8,16 @@
 
 <Description>
   Vendor code for upPIR.   The vendor serves the manifest and mirror list.
-  Thus it acts as a way for mirrors to advertise that they are alive and 
-  for clients to find living mirrors.   
+  Thus it acts as a way for mirrors to advertise that they are alive and
+  for clients to find living mirrors.
 
   A later version will support client notifications of cheating.
 
   For more technical explanation, please see the upPIR papers on my website.
-  
+
 
 <Usage>
-  $ python uppir_vendor.py 
+  $ python uppir_vendor.py
 
 
 <Options>
@@ -28,16 +28,16 @@
 
 # This file is laid out in three main parts.   First, there are helper routines
 # that manage the addition and expiration of mirrorlist content.   Following
-# this are the server routines that handle communications with the clients 
-# or mirrors.   The final part contains the argument parsing and main 
+# this are the server routines that handle communications with the clients
+# or mirrors.   The final part contains the argument parsing and main
 # function.   To understand the code, it is recommended one starts at main
 # and reads from there.
 #
 # EXTENSION POINTS:
 #
-# To handle malicious mirrors, the client and vendor will need to have 
+# To handle malicious mirrors, the client and vendor will need to have
 # support for malicious block reporting.   This change will be primarily
-# in the server portion although, the mirror would also need to include 
+# in the server portion although, the mirror would also need to include
 # a way to blacklist offending mirrors to prevent them from re-registering
 
 
@@ -58,7 +58,7 @@ if sys.version_info[0] != 2 or sys.version_info[1] < 5:
   print "Requires Python >= 2.5 and < 3.0"
   sys.exit(1)
 
-# get JSON 
+# get JSON
 if sys.version_info[1] == 5:
   try:
     import simplejson as json
@@ -84,6 +84,7 @@ import SocketServer
 # to run in the background...
 import daemon
 
+import base64
 
 # for logging purposes...
 import time
@@ -104,7 +105,7 @@ def _log(stringtolog):
 _global_rawmanifestdata = None
 _global_rawmirrorlist = None
 
-# These are more defensible.   
+# These are more defensible.
 _global_mirrorinfodict = {}
 _global_mirrorinfolock = threading.Lock()
 
@@ -115,7 +116,7 @@ import time
 def _testmirror(testinfodict):
   # TODO
   bitstring = testinfodict['chunklist']
-  expectedData = testinfodict['data'].decode("base64", "strict")
+  expectedData = base64.b64decode(testinfodict['data'])
   expectedbitstringlength = uppirlib.compute_bitstring_length(_global_myxordatastore.numberofblocks)
 
   if len(bitstring) != expectedbitstringlength:
@@ -133,7 +134,7 @@ def _testmirror(testinfodict):
     mirrorport = testinfodict['port']
     # TODO remove mirror from list
     session.sendmessage(self.request, 'Invalid mirror: '+mirrorip+":"+mirrorport)
-  
+
   else:
     session.sendmessage(self.request, 'Correct mirror: '+mirrorip+":"+mirrorport)
   return
@@ -152,11 +153,11 @@ def _check_for_expired_mirrorinfo():
       now = time.time()
       # walk through the mirrors and remove any that are over time...
       for mirrorip in _global_mirrorinfodict:
-    
+
         # if it's expired, remove the entry...
         if now > _commandlineoptions.mirrorexpirytime + _global_mirrorinfodict[mirrorip]['advertisetime']:
           del _global_mirrorinfodict[mirrorip]
-    
+
       mirrorlist = []
       # now let's rebuild the mirrorlist
       for mirrorip in _global_mirrorinfodict:
@@ -188,16 +189,16 @@ def _add_mirrorinfo_to_list(thismirrorinfo):
 
   finally:
     _global_mirrorinfolock.release()
-  
 
-  
+
+
 
 
 ######################### Serve upPIR vendor requests ########################
 
 
 # I don't need to change this much, I think...
-class ThreadedVendorServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer): 
+class ThreadedVendorServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
   allow_reuse_address=True
 
 
@@ -216,7 +217,7 @@ class ThreadedVendorRequestHandler(SocketServer.BaseRequestHandler):
 
       session.sendmessage(self.request, _global_rawmanifestdata)
       _log("UPPIRVendor "+remoteip+" "+str(remoteport)+" manifest request")
-  
+
       # done!
       return
 
@@ -231,7 +232,7 @@ class ThreadedVendorRequestHandler(SocketServer.BaseRequestHandler):
 
       # done!
       return
-  
+
     elif requeststring.startswith('RUN TEST'):
       testrawdata = requeststring[len('RUN TEST'):]
       try:
@@ -250,8 +251,8 @@ class ThreadedVendorRequestHandler(SocketServer.BaseRequestHandler):
       # This is a mirror telling us it's ready to serve clients.
 
       mirrorrawdata = requeststring[len('MIRRORADVERTISE'):]
-      
-      # handle the case where the mirror provides data that is larger than 
+
+      # handle the case where the mirror provides data that is larger than
       # we want to serve
       if len(mirrorrawdata) > _commandlineoptions.maxmirrorinfo:
         session.sendmessage(self.request, "Error, mirrorinfo too large!")
@@ -272,13 +273,13 @@ class ThreadedVendorRequestHandler(SocketServer.BaseRequestHandler):
         session.sendmessage(self.request, "Error, mirrorinfo has an invalid format.")
         _log("UPPIRVendor "+remoteip+" "+str(remoteport)+" mirrorinfo has an invalid format")
         return
-      
+
       # is it a dictionary and does it have the required keys?
       if mirrorinfodict['ip'] != remoteip:
         session.sendmessage(self.request, "Error, must provide mirrorinfo from the mirror's IP")
         _log("UPPIRVendor "+remoteip+" "+str(remoteport)+" mirrorinfo provided from the wrong IP")
         return
-      
+
       # add the information to the mirrorlist
       _add_mirrorinfo_to_list(mirrorinfodict)
 
@@ -316,7 +317,7 @@ def start_vendor_service(manifestdict, ip, port):
 
   # create the handler / server
   vendorserver = ThreadedVendorServer((ip, port), ThreadedVendorRequestHandler)
-  
+
 
   # and serve forever!   This call will not return which is why we spawn a new
   # thread to handle it
@@ -336,7 +337,7 @@ def parse_options():
 
   <Arguments>
     None
-  
+
   <Side Effects>
     All relevant data is added to _commandlineoptions
 
@@ -357,13 +358,13 @@ def parse_options():
   parser = optparse.OptionParser()
 
   # I should use these from the manifest, not the command line...
-#  parser.add_option("","--ip", dest="ip", type="string", metavar="IP", 
+#  parser.add_option("","--ip", dest="ip", type="string", metavar="IP",
 #        default="0.0.0.0", help="Listen for clients on the following IP")
 
-#  parser.add_option("","--port", dest="port", type="int", metavar="portnum", 
+#  parser.add_option("","--port", dest="port", type="int", metavar="portnum",
 #        default=62293, help="Run the vendor on the following port (default 62293)")
 
-  parser.add_option("","--manifestfile", dest="manifestfilename", 
+  parser.add_option("","--manifestfile", dest="manifestfilename",
         type="string", default="manifest.dat",
         help="The manifest file to use (default manifest.dat).")
 
@@ -371,15 +372,15 @@ def parse_options():
         default=True,
         help="Do not detach from the terminal and run in the background")
 
-  parser.add_option("","--logfile", dest="logfilename", 
+  parser.add_option("","--logfile", dest="logfilename",
         type="string", default="vendor.log",
         help="The file to write log data to (default vendor.log).")
 
-  parser.add_option("","--maxmirrorinfo", dest="maxmirrorinfo", 
+  parser.add_option("","--maxmirrorinfo", dest="maxmirrorinfo",
         type="int", default=10240,
         help="The maximum amount of serialized data a mirror can add to the mirror list (default 10K)")
 
-  parser.add_option("","--mirrorexpirytime", dest="mirrorexpirytime", 
+  parser.add_option("","--mirrorexpirytime", dest="mirrorexpirytime",
         type="int", default=300,
         help="The number of seconds of inactivity before expiring a mirror (default 300).")
 
@@ -390,7 +391,7 @@ def parse_options():
 
 
   # check the maxmirrorinfo
-  if _commandlineoptions.maxmirrorinfo <=0: 
+  if _commandlineoptions.maxmirrorinfo <=0:
     print "Max mirror info size must be positive"
     sys.exit(1)
 
@@ -406,9 +407,9 @@ def parse_options():
 
 def main():
   global _global_rawmanifestdata
-  global _global_rawmirrorlist 
+  global _global_rawmirrorlist
 
-  
+
   # read in the manifest file
   rawmanifestdata = open(_commandlineoptions.manifestfilename).read()
 
@@ -422,7 +423,7 @@ def main():
 
   vendorip = manifestdict['vendorhostname']
   vendorport = manifestdict['vendorport']
-  
+
   # We should detach here.   I don't do it earlier so that error
   # messages are written to the terminal...   I don't do it later so that any
   # threads don't exist already.   If I do put it much later, the code hangs...
@@ -432,7 +433,7 @@ def main():
   # we're now ready to handle clients!
   _log('ready to start servers!')
 
- 
+
   # first, let's fire up the upPIR server
   start_vendor_service(manifestdict, vendorip, vendorport)
 
@@ -446,9 +447,9 @@ if __name__ == '__main__':
   try:
     main()
   except Exception, e:
-    # log errors to prevent silent exiting...   
+    # log errors to prevent silent exiting...
     print(str(type(e))+" "+str(e))
-    # this mess prints a not-so-nice traceback, but it does contain all 
+    # this mess prints a not-so-nice traceback, but it does contain all
     # relevant info
     _log(str(traceback.format_tb(sys.exc_info()[2])))
     sys.exit(1)

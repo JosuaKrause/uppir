@@ -1,4 +1,4 @@
-""" 
+"""
 <Author>
   Justin Cappos
   (inspired from a previous version by Geremy Condra)
@@ -9,50 +9,50 @@
 <Description>
   Client code for retrieving upPIR files.   This program uses a manifest
   to communicate with a vendor and retrieve a list of mirrors.   The client
-  then _privately_ downloads the appropriate files from mirrors in the mirror 
+  then _privately_ downloads the appropriate files from mirrors in the mirror
   list.  None of the mirrors can tell what file or files were downloaded.
 
   For more technical explanation, please see the upPIR papers on my website.
-  
+
 
 <Usage>
   $ python uppir_client.py file1 [file2 ...]
-  
+
   This will anonymously download file1, file2, ... from the vendor specified.
 
 
 <Options>
   See below
-  
+
 
 """
 
 
 # This file is laid out in two main parts.   First, there are some helper
-# functions to do moderately complex things like retrieving a block from a 
+# functions to do moderately complex things like retrieving a block from a
 # mirror or split a file into blocks.   The second part contains the option
 # parsing and main.   To get an overall feel for the code, it is recommended
 # to follow the execution from main on.
 #
 # EXTENSION POINTS:
 #
-# Making the client extensible is a major problem.   In particular, we will 
-# need to modify mirror selection, block selection, malicious mirror detection, 
-# and avoiding slow nodes simultaneously.   To do this effectively, we need 
-# some sort of mechanism that gives the programmer control over how to handle 
+# Making the client extensible is a major problem.   In particular, we will
+# need to modify mirror selection, block selection, malicious mirror detection,
+# and avoiding slow nodes simultaneously.   To do this effectively, we need
+# some sort of mechanism that gives the programmer control over how to handle
 # these.
 #
 # The XORRequestor interface is used to address these issues.   A programmer
-# The programmer defines an object that is provided the manifest, 
-# mirrorlist, and blocks to retrieve.   The XORRequestor object must support 
-# several methods: get_next_xorrequest(), notify_failure(xorrequest), 
-# notify_success(xorrequest, xordata), and return_block(blocknum).   The 
-# request_blocks_from_mirrors function in this file will use threads to call 
-# these methods to determine what to retrieve.   The notify_* routines are 
-# used to inform the XORRequestor object of prior results so that it can 
+# The programmer defines an object that is provided the manifest,
+# mirrorlist, and blocks to retrieve.   The XORRequestor object must support
+# several methods: get_next_xorrequest(), notify_failure(xorrequest),
+# notify_success(xorrequest, xordata), and return_block(blocknum).   The
+# request_blocks_from_mirrors function in this file will use threads to call
+# these methods to determine what to retrieve.   The notify_* routines are
+# used to inform the XORRequestor object of prior results so that it can
 # decide how to issue future block requests.   This separates out the 'what'
-# from the 'how' but has a slight loss of control.  Note that the block 
-# reconstruction, etc. is done here to allow easy extensibility of malicious 
+# from the 'how' but has a slight loss of control.  Note that the block
+# reconstruction, etc. is done here to allow easy extensibility of malicious
 # mirror detection / vendor notification.
 #
 #
@@ -79,6 +79,8 @@ import threading
 # I really should have a way to do this based upon command line options
 import simplexorrequestor
 
+import base64
+
 
 # for basename
 import os.path
@@ -89,7 +91,7 @@ def _request_helper(rxgobj):
   # Private helper to get requests.   Multiple threads will execute this...
 
   thisrequest = rxgobj.get_next_xorrequest()
-  
+
   # go until there are no more requests
   while thisrequest != ():
     mirrorip = thisrequest[0]['ip']
@@ -106,22 +108,22 @@ def _request_helper(rxgobj):
         sys.stdout.flush()
       else:
         # otherwise, re-raise...
-        raise  
+        raise
 
     else:
       # we retrieved it successfully...
       rxgobj.notify_success(thisrequest, xorblock)
       sys.stdout.write('.')
       sys.stdout.flush()
-    
-      if random.random() > RANDOM_THRESHOLD:
+
+      if random.random() >= RANDOM_THRESHOLD:
         testmirrorinfo = {}
         testmirrorinfo['ip'] = mirrorip
         testmirrorinfo['port'] = mirrorport
-        testmirrorinfo['data'] = xorblock
+        testmirrorinfo['data'] = base64.b64encode(xorblock)
         testmirrorinfo['chunklist'] = bitstring
         uppirlib.request_mirror_test(testmirrorinfo, _commandlineoptions.retrievemanifestfrom)
-    
+
     # regardless of failure or success, get another request...
     thisrequest = rxgobj.get_next_xorrequest()
 
@@ -138,12 +140,12 @@ def request_blocks_from_mirrors(requestedblocklist, manifestdict):
     requestedblocklist: the blocks to acquire
 
     manifestdict: the manifest with information about the release
-  
+
   <Side Effects>
     Contacts mirrors to retrieve blocks.    It uses some global options
 
   <Exceptions>
-    TypeError may be raised if the provided lists are invalid.   
+    TypeError may be raised if the provided lists are invalid.
     socket errors may be raised if communications fail.
 
   <Returns>
@@ -173,9 +175,9 @@ def request_blocks_from_mirrors(requestedblocklist, manifestdict):
     retdict[blocknum] = rxgobj.return_block(blocknum)
 
   return retdict
-  
 
-  
+
+
 
 
 
@@ -189,18 +191,18 @@ def request_files_from_mirrors(requestedfilelist, manifestdict):
     requestedfilelist: the files to acquire
 
     manifestdict: the manifest with information about the release
-  
+
   <Side Effects>
     Contacts mirrors to retrieve files.   They are written to disk
 
   <Exceptions>
-    TypeError may be raised if the provided lists are invalid.   
+    TypeError may be raised if the provided lists are invalid.
     socket errors may be raised if communications fail.
 
   <Returns>
     None
   """
-  
+
   neededblocks = []
   # let's figure out what blocks we need
   for filename in requestedfilelist:
@@ -211,14 +213,14 @@ def request_files_from_mirrors(requestedfilelist, manifestdict):
     for blocknum in theseblocks:
       if blocknum not in neededblocks:
         neededblocks.append(blocknum)
-    
+
 
   # do the actual retrieval work
   blockdict = request_blocks_from_mirrors(neededblocks, manifestdict)
 
   # now we should write out the files
   for filename in requestedfilelist:
-    filedata = uppirlib.extract_file_from_blockdict(filename, manifestdict, blockdict)  
+    filedata = uppirlib.extract_file_from_blockdict(filename, manifestdict, blockdict)
 
     # let's check the hash
     thisfilehash = uppirlib.find_hash(filedata, manifestdict['hashalgorithm'])
@@ -253,7 +255,7 @@ def parse_options():
 
   <Arguments>
     None
-  
+
   <Side Effects>
     All relevant data is added to _commandlineoptions
 
@@ -272,11 +274,11 @@ def parse_options():
 
   parser = optparse.OptionParser()
 
-  parser.add_option("","--retrievemanifestfrom", dest="retrievemanifestfrom", 
+  parser.add_option("","--retrievemanifestfrom", dest="retrievemanifestfrom",
         type="string", metavar="vendorIP:port", default="",
         help="Specifies the vendor to retrieve the manifest from (default None).")
 
-  parser.add_option("","--manifestfile", dest="manifestfilename", 
+  parser.add_option("","--manifestfile", dest="manifestfilename",
         type="string", default="manifest.dat",
         help="The manifest file to use (default manifest.dat).")
 
@@ -318,7 +320,7 @@ def parse_options():
 
 def main():
 
-  
+
   # If we were asked to retrieve the mainfest file, do so...
   if _commandlineoptions.retrievemanifestfrom:
     # We need to download this file...
@@ -326,7 +328,7 @@ def main():
 
     # ...make sure it is valid...
     manifestdict = uppirlib.parse_manifest(rawmanifestdata)
-    
+
     # ...and write it out if it's okay
     open(_commandlineoptions.manifestfilename, "w").write(rawmanifestdata)
 
@@ -337,7 +339,7 @@ def main():
     rawmanifestdata = open(_commandlineoptions.manifestfilename).read()
 
     manifestdict = uppirlib.parse_manifest(rawmanifestdata)
-  
+
 
   # we will check that the files are in the release
 
@@ -351,10 +353,10 @@ def main():
     if filename not in manifestfilelist:
       print "File:",filename,"is not listed in the manifest."
       sys.exit(2)
-    
 
 
-  
+
+
   request_files_from_mirrors(_commandlineoptions.filestoretrieve, manifestdict)
 
 
