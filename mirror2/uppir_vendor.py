@@ -137,7 +137,7 @@ def _testmirror(rh, testinfodict):
   mirrorport = testinfodict['port']
   #print "bitstring"+testinfodict['chunklist']+"\n"
   xoranswer = myxordatastore.produce_xor_from_bitstring(bitstring)
-  if (xoranswer != expectedData) and False:
+  if xoranswer != expectedData: # or True
     session.sendmessage(rh.request, 'TEST: Invalid mirror: '+str(mirrorip)+":"+str(mirrorport))
     #print "xor"+base64.b64encode(xoranswer)+"\n"
     #print "mir"+base64.b64encode(expectedData)+"\n"
@@ -182,12 +182,13 @@ def _remove_mirror(ip, port):
   global _global_mirrorinfodict
   _global_mirrorinfolock.acquire()
   try:
-    mirrorip = thismirrorinfo['ip']+':'+str(thismirrorinfo['port'])
-    del _global_mirrorinfodict[mirrorip]
-    _check_for_expired_mirrorinfo()
+    mirrorip = ip+':'+str(port)
+    if mirrorip in _global_mirrorinfodict:
+      del _global_mirrorinfodict[mirrorip]
   finally:
     _global_mirrorinfolock.release()
-    print "new mirror list: "+_global_rawmirrorlist
+  _check_for_expired_mirrorinfo()
+  #print "new mirror list: "+_global_rawmirrorlist
 
 def _add_mirrorinfo_to_list(thismirrorinfo):
   # Private function to add mirror information
