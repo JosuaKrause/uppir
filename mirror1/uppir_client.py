@@ -122,7 +122,8 @@ def _request_helper(rxgobj):
         testmirrorinfo['port'] = mirrorport
         testmirrorinfo['data'] = base64.b64encode(xorblock)
         testmirrorinfo['chunklist'] = base64.b64encode(bitstring)
-        uppirlib.request_mirror_test(testmirrorinfo, _commandlineoptions.retrievemanifestfrom)
+        msg = uppirlib.request_mirror_test(testmirrorinfo, _commandlineoptions.retrievemanifestfrom)
+        print msg+"\n"
 
     # regardless of failure or success, get another request...
     thisrequest = rxgobj.get_next_xorrequest()

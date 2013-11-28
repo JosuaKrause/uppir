@@ -1,4 +1,4 @@
-""" 
+"""
 <Author>  Justin Cappos
   (inspired from a previous version by Geremy Condra)
 
@@ -6,10 +6,10 @@
   May 16th, 2011
 
 <Description>
-  Lots of helper code for upPIR.   Much of this code will be used multiple 
+  Lots of helper code for upPIR.   Much of this code will be used multiple
   places, but some many not.   Anything that is at least somewhat general will
   live here.
-  
+
 """
 
 import sys
@@ -18,7 +18,7 @@ import sys
 import os
 
 # only need ceil
-import math 
+import math
 
 
 import socket
@@ -27,7 +27,7 @@ import socket
 import session
 
 
-# Check the python version.   It's pretty crappy to do this from a library, 
+# Check the python version.   It's pretty crappy to do this from a library,
 # but it's an easy way to check this universally
 if sys.version_info[0] != 2 or sys.version_info[1] < 5:
   print "Requires Python >= 2.5 and < 3.0"
@@ -60,23 +60,23 @@ class IncorrectFileContents(Exception):
 
 
 # these keys must exist in a manifest dictionary.
-_required_manifest_keys = ['manifestversion', 'blocksize', 'blockcount', 
-                           'blockhashlist', 'hashalgorithm', 
-                           'vendorhostname', 'vendorport', 
+_required_manifest_keys = ['manifestversion', 'blocksize', 'blockcount',
+                           'blockhashlist', 'hashalgorithm',
+                           'vendorhostname', 'vendorport',
                            'manifesthash', 'fileinfolist' ]
 
 # an example manifest might look like:
-# {'manifestversion':"1.0", 'blocksize':1024, 'blockcount':100, 
+# {'manifestversion':"1.0", 'blocksize':1024, 'blockcount':100,
 #  'blockhashlist':['ab3...', ''2de...', ...], 'hashalgorithm':'sha1-base64',
 #  'vendorhostname':'blackbox.cs.washington.edu', vendorport:62293,
-#  'manifesthash':'42a...', 
+#  'manifesthash':'42a...',
 #  'fileinfolist':[{'filename':'file1',
 #                   'hash':'a8...',
-#                   'offset':1584, 
+#                   'offset':1584,
 #                   'length':1023),   # (do I need this?)
 #                  {'filename':'foo/file2', # (next file listed...)
 #                   'hash':'4f...',
-#                   'offset':2607,    
+#                   'offset':2607,
 #                   'length':63451},  #  (do I need this?)
 #                   ...]
 
@@ -96,23 +96,23 @@ def _validate_manifest(manifest):
     raise TypeError("There must be a hash for every manifest block")
 
   # otherwise, I guess I'll let this slide.   I don't want the checking to
-  # be too version specific  
+  # be too version specific
   # JAC: Is this a dumb idea?   Should I just check it all?   Do I want
   # this to fail later?   Can the version be used as a proxy check for this?
 
 
-_supported_hashalgorithms = ['md5', 'sha1', 'sha224', 'sha256', 'sha384', 
+_supported_hashalgorithms = ['md5', 'sha1', 'sha224', 'sha256', 'sha384',
                              'sha512']
 
 _supported_hashencodings = ['hex','raw']
 
 def find_hash(contents, algorithm):
-  # Helper function for hashing...   
+  # Helper function for hashing...
 
   # first, if it's a noop, do nothing.   THIS IS FOR TESTING ONLY
   if algorithm == 'noop':
     return ''
-  
+
   # accept things like: "sha1", "sha256-raw", etc.
   # before the '-' is one of the types known to hashlib.   After is
 
@@ -128,7 +128,7 @@ def find_hash(contents, algorithm):
   if hashencoding not in _supported_hashencodings:
     raise TypeError("Do not understand hash algorithm: '"+algorithm+"'")
 
-  
+
   hashobj = hashlib.new(hashalgorithmname)
 
   hashobj.update(contents)
@@ -139,21 +139,21 @@ def find_hash(contents, algorithm):
     return hashobj.hexdigest()
   else:
     raise Exception("Internal Error!   Unknown hashencoding '"+hashencoding+"'")
-  
 
-  
+
+
 def transmit_mirrorinfo(mirrorinfo, vendorlocation, defaultvendorport=62293):
   """
   <Purpose>
-    Sends our mirror information to a vendor.   
+    Sends our mirror information to a vendor.
 
   <Arguments>
-    vendorlocation: A string that contains the vendor location.   This can be 
+    vendorlocation: A string that contains the vendor location.   This can be
                     of the form "IP:port", "hostname:port", "IP", or "hostname"
 
-    defaultvendorport: the port to use if the vendorlocation does not include 
+    defaultvendorport: the port to use if the vendorlocation does not include
                        one.
-    
+
 
   <Exceptions>
     TypeError if the args are the wrong types or malformed...
@@ -187,12 +187,12 @@ def retrieve_rawmanifest(vendorlocation, defaultvendorport=62293):
     data in any way.
 
   <Arguments>
-    vendorlocation: A string that contains the vendor location.   This can be 
+    vendorlocation: A string that contains the vendor location.   This can be
                     of the form "IP:port", "hostname:port", "IP", or "hostname"
 
-    defaultvendorport: the port to use if the vendorlocation does not include 
+    defaultvendorport: the port to use if the vendorlocation does not include
                        one.
-    
+
 
   <Exceptions>
     TypeError if the vendorlocation is the wrong type or malformed.
@@ -216,12 +216,12 @@ def request_mirror_test(testinfo, vendorlocation, defaultvendorport=62293):
 
   <Arguments>
     testinfo: TODO
-    vendorlocation: A string that contains the vendor location.   This can be 
+    vendorlocation: A string that contains the vendor location.   This can be
                     of the form "IP:port", "hostname:port", "IP", or "hostname"
 
-    defaultvendorport: the port to use if the vendorlocation does not include 
+    defaultvendorport: the port to use if the vendorlocation does not include
                        one.
-                       
+
   <Exceptions>
     TypeError if the vendorlocation is the wrong type or malformed.
 
@@ -235,14 +235,14 @@ def request_mirror_test(testinfo, vendorlocation, defaultvendorport=62293):
     to use parse_manifest to ensure this data is correct.
   """
   msg = "RUN TEST"+json.dumps(testinfo)
-  _remote_query_helper(vendorlocation, msg, defaultvendorport)
+  return _remote_query_helper(vendorlocation, msg, defaultvendorport)
 
 
 
 def retrieve_xorblock_from_mirror(mirrorip, mirrorport,bitstring):
   """
   <Purpose>
-    Retrieves a block from a mirror.   
+    Retrieves a block from a mirror.
 
   <Arguments>
     mirrorip: the mirror's IP address or hostname
@@ -253,7 +253,7 @@ def retrieve_xorblock_from_mirror(mirrorip, mirrorport,bitstring):
                specifies which blocks to combine.
 
   <Exceptions>
-    TypeError if the arguments are the wrong types.  ValueError if the 
+    TypeError if the arguments are the wrong types.  ValueError if the
     bitstring is the wrong size
 
     various socket errors if the connection fails.
@@ -279,13 +279,13 @@ def retrieve_xorblock_from_mirror(mirrorip, mirrorport,bitstring):
 def retrieve_mirrorinfolist(vendorlocation, defaultvendorport=62293):
   """
   <Purpose>
-    Retrieves the mirrorinfolist from a vendor.  
+    Retrieves the mirrorinfolist from a vendor.
 
   <Arguments>
-    vendorlocation: A string that contains the vendor location.   This can be 
+    vendorlocation: A string that contains the vendor location.   This can be
                     of the form "IP:port", "hostname:port", "IP", or "hostname"
-    
-    defaultvendorport: the port to use if the vendorlocation does not include 
+
+    defaultvendorport: the port to use if the vendorlocation does not include
                        one.
 
   <Exceptions>
@@ -300,7 +300,7 @@ def retrieve_mirrorinfolist(vendorlocation, defaultvendorport=62293):
     Contacts the vendor and retrieves data from it
 
   <Returns>
-    A list of mirror information dictionaries.   
+    A list of mirror information dictionaries.
   """
   rawmirrordata = _remote_query_helper(vendorlocation, "GET MIRRORLIST", defaultvendorport)
 
@@ -309,7 +309,7 @@ def retrieve_mirrorinfolist(vendorlocation, defaultvendorport=62293):
   # the mirrorinfolist must be a list (duh)
   if type(mirrorinfolist) != list:
     raise TypeError("Malformed mirror list from vendor.   Is a "+str(type(mirrorinfolist))+" not a list")
-  
+
   for mirrorlocation in mirrorinfolist:
     # must be a string
     if type(mirrorlocation) != dict:
@@ -319,7 +319,7 @@ def retrieve_mirrorinfolist(vendorlocation, defaultvendorport=62293):
   return mirrorinfolist
 
 
-  
+
 
 
 
@@ -332,7 +332,7 @@ def _remote_query_helper(serverlocation, command, defaultserverport):
 
   # now let's split it and ensure there are 0 or 1 colons
   splitlocationlist = serverlocation.split(':')
-  
+
   if len(splitlocationlist) >2:
     raise TypeError("Server location may not contain more than one colon")
 
@@ -340,7 +340,7 @@ def _remote_query_helper(serverlocation, command, defaultserverport):
   # now either set the port or use the default
   if len(splitlocationlist) == 2:
     serverport = int(splitlocationlist[1])
-  else: 
+  else:
     serverport = defaultserverport
 
   # check that this port is in the right range
@@ -351,7 +351,7 @@ def _remote_query_helper(serverlocation, command, defaultserverport):
 
 
   # now we actually download the information...
-  
+
   # first open the socket
   serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   serversocket.connect((serverhostname, serverport))
@@ -375,13 +375,13 @@ def _remote_query_helper(serverlocation, command, defaultserverport):
 def parse_manifest(rawmanifestdata):
   """
   <Purpose>
-    Given raw manifest data, returns a dictionary containing a manifest 
+    Given raw manifest data, returns a dictionary containing a manifest
     dictionary.
 
   <Arguments>
     rawmanifestdata: a string containing the raw manifest data as is produced
                      by the json module.
-                     
+
   <Exceptions>
     TypeError or ValueError if the manifest data is corrupt
 
@@ -389,7 +389,7 @@ def parse_manifest(rawmanifestdata):
     None
 
   <Returns>
-    A dictionary containing the manifest.   
+    A dictionary containing the manifest.
   """
 
   if type(rawmanifestdata) != str:
@@ -398,7 +398,7 @@ def parse_manifest(rawmanifestdata):
   manifestdict = json.loads(rawmanifestdata)
 
   _validate_manifest(manifestdict)
-  
+
   return manifestdict
 
 
@@ -416,13 +416,13 @@ def populate_xordatastore(manifestdict, xordatastore, rootdir="."):
     xordatastore: the XOR datastore that we should populate.
 
     rootdir: The location to look for the files mentioned in the manifest
-                     
+
   <Exceptions>
-    TypeError if the manifest is corrupt or the rootdir is the wrong type.   
-    
+    TypeError if the manifest is corrupt or the rootdir is the wrong type.
+
     FileNotFound if the rootdir does not contain a manifest file.
 
-    IncorrectFileContents if the file listed in the manifest file has the 
+    IncorrectFileContents if the file listed in the manifest file has the
                           wrong size or hash
 
   <Side Effects>
@@ -441,9 +441,9 @@ def populate_xordatastore(manifestdict, xordatastore, rootdir="."):
   _add_data_to_datastore(xordatastore,manifestdict['fileinfolist'],rootdir, manifestdict['hashalgorithm'])
 
   hashlist = _compute_block_hashlist(xordatastore, manifestdict['blockcount'], manifestdict['blocksize'], manifestdict['hashalgorithm'])
-  
+
   for blocknum in range(manifestdict['blockcount']):
- 
+
     if hashlist[blocknum] != manifestdict['blockhashlist'][blocknum]:
       raise TypeError("Despite matching file hashes, block '"+str(blocknum)+"' has an invalid hash.\nCorrupt manifest or dirty xordatastore")
 
@@ -455,13 +455,13 @@ def _add_data_to_datastore(xordatastore, fileinfolist, rootdir, hashalgorithm):
 
   # go through the files one at a time and populate the xordatastore
   for thisfiledict in fileinfolist:
-    
+
     thisrelativefilename = thisfiledict['filename']
     thisfilehash = thisfiledict['hash']
     thisoffset = thisfiledict['offset']
     thisfilelength = thisfiledict['length']
 
-    
+
     thisfilename = os.path.join(rootdir, thisrelativefilename)
 
     # read in the files and populate the xordatastore
@@ -475,11 +475,11 @@ def _add_data_to_datastore(xordatastore, fileinfolist, rootdir, hashalgorithm):
 
     # get the relevant data
     thisfilecontents = open(thisfilename).read()
-    
+
     # let's see if this has the right size
     if len(thisfilecontents) != thisfilelength:
       raise IncorrectFileContents("File '"+thisrelativefilename+"' has the wrong size")
-    
+
     # let's see if this has the right hash
     if thisfilehash != find_hash(thisfilecontents, hashalgorithm):
       raise IncorrectFileContents("File '"+thisrelativefilename+"' has the wrong hash")
@@ -487,24 +487,24 @@ def _add_data_to_datastore(xordatastore, fileinfolist, rootdir, hashalgorithm):
 
     # and add it to the datastore
     xordatastore.set_data(thisoffset, thisfilecontents)
-      
+
 
 
 def _compute_block_hashlist(xordatastore, blockcount, blocksize, hashalgorithm):
   # private helper, used both the compute and check hashes
 
   currenthashlist = []
-  
+
   # Now I'll check the blocks have the right hash...
   for blocknum in range(blockcount):
     # read the block ...
     thisblock = xordatastore.get_data(blocksize*blocknum, blocksize)
-    
+
     # ... and check its hash
     currenthashlist.append(find_hash(thisblock, hashalgorithm))
-    
+
   return currenthashlist
-    
+
 
 
 
@@ -520,11 +520,11 @@ def nogaps_offset_assignment_function(fileinfolist, rootdir, blocksize):
 
     rootdir: the root directory where the files live
 
-    block_size: The size of a block of data.   
+    block_size: The size of a block of data.
 
   <Exceptions>
     TypeError, IndexError, or KeyError if the arguements are incorrect
-    
+
   <Side Effects>
     Modifies the fileinfolist to add offset elements to each dict
 
@@ -566,14 +566,14 @@ def extract_file_from_blockdict(filename, manifestdict, blockdict):
 
   <Exceptions>
     TypeError, IndexError, or KeyError if the args are incorrect
-    
+
   <Side Effects>
     None
 
   <Returns>
     A string containing the file contents
   """
- 
+
   blocksize = manifestdict['blocksize']
 
   for fileinfo in manifestdict['fileinfolist']:
@@ -582,7 +582,7 @@ def extract_file_from_blockdict(filename, manifestdict, blockdict):
       offset = fileinfo['offset']
       quantity = fileinfo['length']
 
-      # Let's get the block information 
+      # Let's get the block information
       (startblock,startoffset) = _find_blockloc_from_offset(offset, blocksize)
       (endblock, endoffset) = _find_blockloc_from_offset(offset+quantity, blocksize)
 
@@ -595,22 +595,22 @@ def extract_file_from_blockdict(filename, manifestdict, blockdict):
       # we'll build up the string starting with the first block...
       currentstring = blockdict[startblock][startoffset:]
 
-      # now add in the 'middle' blocks.   This is all of the blocks 
+      # now add in the 'middle' blocks.   This is all of the blocks
       # after the start and before the end
       for currentblock in range(startblock+1, endblock):
         currentstring += blockdict[currentblock]
 
       # this check is needed because we might be past the last block.
       if endoffset > 0:
-        # finally, add the end block. 
+        # finally, add the end block.
         currentstring += blockdict[endblock][:endoffset]
 
       # and return the result
       return currentstring
 
-      
 
- 
+
+
 
 
 
@@ -630,23 +630,23 @@ def get_blocklist_for_file(filename, manifestdict):
   <Exceptions>
     TypeError, IndexError, or KeyError if the manifestdict / filename are
     corrupt
-    
+
   <Side Effects>
     None
 
   <Returns>
     A list of blocks numbers
   """
- 
+
   for fileinfo in manifestdict['fileinfolist']:
     if filename == fileinfo['filename']:
-      # it's the starting offset / blocksize until the 
+      # it's the starting offset / blocksize until the
       # ending offset -1 divided by the blocksize
       # I do + 1 because range will otherwise omit the last block
       return range(fileinfo['offset'] / manifestdict['blocksize'], (fileinfo['offset'] + fileinfo['length'] - 1) / manifestdict['blocksize'] + 1)
 
   raise TypeError("File is not in manifest")
- 
+
 
 
 
@@ -663,19 +663,19 @@ def get_filenames_in_release(manifestdict):
 
   <Exceptions>
     TypeError, IndexError, or KeyError if the manifestdict is corrupt
-    
+
   <Side Effects>
     None
 
   <Returns>
     A list of file names
   """
- 
+
   filenamelist = []
 
   for fileinfo in manifestdict['fileinfolist']:
     filenamelist.append(fileinfo['filename'])
- 
+
   return filenamelist
 
 
@@ -702,10 +702,10 @@ def _generate_fileinfolist(startdirectory, hashalgorithm="sha1-base64"):
       thisfiledict['hash'] = find_hash(filecontents, hashalgorithm)
 
       fileinfo_list.append(thisfiledict)
-      
+
 
   return fileinfo_list
-  
+
 
 def compute_bitstring_length(num_blocks):
   # quick function to compute bitstring length
@@ -715,7 +715,7 @@ def set_bitstring_bit(bitstring, bitnum,valuetoset):
   # quick function to set a bit in a bitstring...
   bytepos = bitnum / 8
   bitpos = 7-(bitnum % 8)
-  
+
   bytevalue = ord(bitstring[bytepos])
   # if setting to 1...
   if valuetoset:
@@ -726,13 +726,13 @@ def set_bitstring_bit(bitstring, bitnum,valuetoset):
       return bitstring[:bytepos]+ chr(bytevalue + (2**bitpos)) +bitstring[bytepos+1:]
 
   else: # I'm setting it to 0...
-   
+
     if bytevalue & (2**bitpos):
       return bitstring[:bytepos]+ chr(bytevalue - (2**bitpos)) +bitstring[bytepos+1:]
     else:
       # nothing to do, it's not set.
       return bitstring
-    
+
 
 def get_bitstring_bit(bitstring, bitnum):
   # returns a bit...
@@ -748,8 +748,8 @@ def flip_bitstring_bit(bitstring, bitnum):
   targetbit = get_bitstring_bit(bitstring, bitnum)
 
   # 0 -> 1, 1 -> 0
-  targetbit = 1-targetbit   
-  
+  targetbit = 1-targetbit
+
   return set_bitstring_bit(bitstring, bitnum, targetbit)
 
 
@@ -763,17 +763,17 @@ def create_manifest(rootdir=".", hashalgorithm="sha1-base64", block_size=1024*10
     rootdir: The area to walk looking for files to add to the manifest
 
     hashalgorithm: The hash algorithm to use to validate file contents
-                     
-    block_size: The size of a block of data.   
+
+    block_size: The size of a block of data.
 
     offset_assignment_function: specifies how to lay out the files in blocks.
 
   <Exceptions>
     TypeError if the arguments are corrupt or of the wrong type
-    
+
     FileNotFound if the rootdir does not contain a manifest file.
 
-    IncorrectFileContents if the file listed in the manifest file has the 
+    IncorrectFileContents if the file listed in the manifest file has the
                           wrong size or hash
 
   <Side Effects>
@@ -791,7 +791,7 @@ def create_manifest(rootdir=".", hashalgorithm="sha1-base64", block_size=1024*10
   if ':' in vendorhostname:
     raise TypeError("Vendor server name must not contain ':'")
 
-  # general workflow: 
+  # general workflow:
   #   set the global parameters
   #   build an xordatastore and add file information as you go...
   #   derive hash information from the xordatastore
@@ -853,7 +853,7 @@ def create_manifest(rootdir=".", hashalgorithm="sha1-base64", block_size=1024*10
 
   # now let's put the files in the datastore
   _add_data_to_datastore(xordatastore, manifestdict['fileinfolist'], rootdir, manifestdict['hashalgorithm'])
-   
+
   # and it is time to get the blockhashlist...
   manifestdict['blockhashlist'] = _compute_block_hashlist(xordatastore, manifestdict['blockcount'], manifestdict['blocksize'], manifestdict['hashalgorithm'])
 

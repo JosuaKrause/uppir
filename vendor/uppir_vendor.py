@@ -86,6 +86,7 @@ import daemon
 
 import base64
 import random
+import simplexordatastore as fastsimplexordatastore
 
 # for logging purposes...
 import time
@@ -118,7 +119,7 @@ RANDOM_THRESHOLD = 0 #0.8
 ########################### Mirrorlist manipulation ##########################
 import time
 
-def _testmirror(testinfodict):
+def _testmirror(rh, testinfodict):
   global _global_myxordatastore
   if _global_myxordatastore == None:
     manifestdict = uppirlib.parse_manifest(_global_rawmanifestdata)
@@ -132,7 +133,7 @@ def _testmirror(testinfodict):
     # Invalid request length...
     _log("UPPIR "+remoteip+" "+str(remoteport)+" Invalid request with length: "+str(len(bitstring)))
 
-    session.sendmessage(self.request, 'Invalid request length')
+    session.sendmessage(rh.request, 'Invalid request length')
     # TODO
     return
 
@@ -142,10 +143,10 @@ def _testmirror(testinfodict):
     mirrorip = testinfodict['ip']
     mirrorport = testinfodict['port']
     # TODO remove mirror from list
-    session.sendmessage(self.request, 'Invalid mirror: '+mirrorip+":"+mirrorport)
+    session.sendmessage(rh.request, 'Invalid mirror: '+str(mirrorip)+":"+str(mirrorport))
 
   else:
-    session.sendmessage(self.request, 'Correct mirror: '+mirrorip+":"+mirrorport)
+    session.sendmessage(rh.request, 'Correct mirror: '+str(mirrorip)+":"+str(mirrorport))
   return
 
 def _check_for_expired_mirrorinfo():
@@ -256,7 +257,7 @@ class ThreadedVendorRequestHandler(SocketServer.BaseRequestHandler):
         session.sendmessage(self.request, "Error, testinfodict has an invalid format.")
         _log("UPPIRVendor "+remoteip+" "+str(remoteport)+" testinfodict has an invalid format")
         return
-      _testmirror(testinfodict)
+      _testmirror(self, testinfodict)
 
     elif requeststring.startswith('MIRRORADVERTISE'):
       # This is a mirror telling us it's ready to serve clients.
