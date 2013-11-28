@@ -85,6 +85,7 @@ import SocketServer
 import daemon
 
 import base64
+import random
 
 # for logging purposes...
 import time
@@ -111,6 +112,8 @@ _global_mirrorinfolock = threading.Lock()
 
 _global_myxordatastore = None
 
+RANDOM_THRESHOLD = 0 #0.8
+
 
 ########################### Mirrorlist manipulation ##########################
 import time
@@ -121,7 +124,7 @@ def _testmirror(testinfodict):
     manifestdict = uppirlib.parse_manifest(_global_rawmanifestdata)
     _global_myxordatastore = fastsimplexordatastore.XORDatastore(manifestdict['blocksize'], manifestdict['blockcount'])
   # TODO
-  bitstring = testinfodict['chunklist']
+  bitstring = base64.b64decode(testinfodict['chunklist'])
   expectedData = base64.b64decode(testinfodict['data'])
   expectedbitstringlength = uppirlib.compute_bitstring_length(_global_myxordatastore.numberofblocks)
 
@@ -240,6 +243,8 @@ class ThreadedVendorRequestHandler(SocketServer.BaseRequestHandler):
       return
 
     elif requeststring.startswith('RUN TEST'):
+      if random.random() < RANDOM_THRESHOLD:
+        return
       testrawdata = requeststring[len('RUN TEST'):]
       try:
         testinfodict = json.loads(testrawdata)
