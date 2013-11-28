@@ -109,11 +109,17 @@ _global_rawmirrorlist = None
 _global_mirrorinfodict = {}
 _global_mirrorinfolock = threading.Lock()
 
+_global_myxordatastore = None
+
 
 ########################### Mirrorlist manipulation ##########################
 import time
 
 def _testmirror(testinfodict):
+  global _global_myxordatastore
+  if _global_myxordatastore == None:
+    manifestdict = uppirlib.parse_manifest(_global_rawmanifestdata)
+    _global_myxordatastore = fastsimplexordatastore.XORDatastore(manifestdict['blocksize'], manifestdict['blockcount'])
   # TODO
   bitstring = testinfodict['chunklist']
   expectedData = base64.b64decode(testinfodict['data'])
